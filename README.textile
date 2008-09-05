@@ -1,0 +1,6 @@
+h1. ViewSpecify
+
+TODO: write README
+
+
+Copyright (c) 2008 Obie Fernandez & Jon Larkowski, released under the MIT license
