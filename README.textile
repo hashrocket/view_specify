@@ -1,6 +1,8 @@
-h1. ViewSpecify
+h1. view_specify
 
-TODO: write README
+That's "speck-a-fie."  This plugin auto-generates RSpec view specs by interrogating your existing
+views.  Pardon our dust; this is alpha software.  But, it serves as a handy,
+time-saving first pass at writing your view specs.
 
 
-Copyright (c) 2008 Obie Fernandez & Jon Larkowski, released under the MIT license
+Copyright (c) 2008 "Obie Fernandez":mailto:obie@hashrocket.com, "Jon 'Lark' Larkowski":mailto:l4rk@hashrocket.com, and "Hashrocket":http://www.hashrocket.com/, released under the MIT license
