@@ -11,9 +11,8 @@ You can add extra template stubs, if you need, with the @--stubs@ option.
 
 Current limitations:
 
-# only works for haml views (that's all we use)
 # you have to add the @--force@ option for subsequent runs
-
+# mocking "dot chains" doesn't work right now
 
 <pre>
 <code>
