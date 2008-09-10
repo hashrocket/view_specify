@@ -24,4 +24,4 @@ Current limitations:
 </code>
 </pre>
 
-Copyright (c) 2008 "Obie Fernandez":mailto:obie@hashrocket.com, "Jon 'Lark' Larkowski":mailto:l4rk@hashrocket.com, and "Hashrocket":http://www.hashrocket.com/, released under the MIT license
+Copyright (c) 2008 Obie Fernandez, Jon "Lark" Larkowski, and "Hashrocket":http://www.hashrocket.com/, released under the MIT license
