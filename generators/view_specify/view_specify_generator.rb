@@ -2,10 +2,11 @@ require 'rake'
 require 'rbconfig'
 
 class ViewSpecifyGenerator < Rails::Generator::Base
-  
   def manifest
     record do |m|
+      # TODO: handle erb
       files = FileList["app/views/**/*.html.haml"]
+      
       files.each do |view_template_path|
         next if view_template_path =~ /\/_/  # ignore partials
         
@@ -36,75 +37,75 @@ class ViewSpecifyGenerator < Rails::Generator::Base
   
   protected
   
-    def banner
-      "Usage: #{$0} [options]"
-    end
+  def banner
+    "Usage: #{$0} [options]"
+  end
 
-    def add_options!(opt)
-      opt.separator ''
-      opt.separator 'Options:'
+  def add_options!(opt)
+    opt.separator ''
+    opt.separator 'Options:'
 
-      opt.on("", "--stubs=stub1,stub2,stub3", String,
-            "Extra template stubs to add, comma-delimited",
-            "Default: none") { |v| options[:stubs] = v.split(',') }             
-    end
+    opt.on("", "--stubs=stub1,stub2,stub3", String,
+          "Extra template stubs to add, comma-delimited",
+          "Default: none") { |v| options[:stubs] = v.split(',') }             
+  end
   
   private
   
-    def extra_stubs
-      options[:stubs].blank? ? [] : options[:stubs]
-    end
+  def extra_stubs
+    options[:stubs].blank? ? [] : options[:stubs]
+  end
 
-    def instance_vars(line)
-      returning [] do |mocks|
-        line.scan(/@(.+?)\b/).flatten.each do |var|
-          begin
-            var.classify.constantize
-            
-            if var.singularize == var
-              mocks << "assigns[:#{var}] = mock_model(#{var.classify}, :null_object => true)"
-            else
-              mocks << "assigns[:#{var}] = [mock_model(#{var.classify}, :null_object => true)].paginate"                            
-            end
-          rescue NameError
-            mocks << "assigns[:#{var}] = mock('#{var}', :null_object => true)"
+  def instance_vars(line)
+    returning [] do |mocks|
+      line.scan(/@(.+?)\b/).flatten.each do |var|
+        begin
+          var.classify.constantize
+          
+          if var.singularize == var
+            mocks << "assigns[:#{var}] = mock_model(#{var.classify}, :null_object => true)"
+          else
+            mocks << "assigns[:#{var}] = [mock_model(#{var.classify}, :null_object => true)].paginate"                            
           end
+        rescue NameError
+          mocks << "assigns[:#{var}] = mock('#{var}', :null_object => true)"
         end
       end
     end
-    
-    def helper_method_names(line)
-      stubs = []
-      helper_methods.each do |helper_method|
-        stubs << "template.stub!(:#{helper_method}).and_return(mock('#{helper_method}_return_value', :null_object => true))" if line[helper_method]
-      end
-      routes.each do |route|
-        stubs << "template.stub!(:#{route}).and_return('')" if line[route]
-      end
-      stubs
+  end
+  
+  def helper_method_names(line)
+    stubs = []
+    helper_methods.each do |helper_method|
+      stubs << "template.stub!(:#{helper_method}).and_return(mock('#{helper_method}_return_value', :null_object => true))" if line[helper_method]
     end
-    
-    def helper_methods
-      helper_files = FileList["app/helpers/*.rb"]
-      helper_files += FileList["vendor/plugins/**/*_helper.rb"]
-      @helper_methods ||= helper_files.collect do |helper_file|
-        File.open(helper_file) { |f| f.readlines.join.scan(/def\s+(.+)[(\b]/) }
-      end.flatten + extra_stubs
+    routes.each do |route|
+      stubs << "template.stub!(:#{route}).and_return('')" if line[route]
     end
-    
-    def routes
-      unless @routes
-        @routes = []
-        ActionController::Routing::Routes.routes.collect do |route|
-          stem = ActionController::Routing::Routes.named_routes.routes.index(route).to_s
-          next if stem.blank?
-        
-          @routes << "#{stem}_path"
-          @routes << "#{stem}_url"
-        end
-      end
+    stubs
+  end
+  
+  def helper_methods
+    helper_files = FileList["app/helpers/*.rb"]
+    helper_files += FileList["vendor/plugins/**/*_helper.rb"]
+    @helper_methods ||= helper_files.collect do |helper_file|
+      File.open(helper_file) { |f| f.readlines.join.scan(/def\s+(.+)[(\b]/) }
+    end.flatten + extra_stubs
+  end
+  
+  def routes
+    unless @routes
+      @routes = []
+      ActionController::Routing::Routes.routes.collect do |route|
+        stem = ActionController::Routing::Routes.named_routes.routes.index(route).to_s
+        next if stem.blank?
       
-      return @routes
+        @routes << "#{stem}_path"
+        @routes << "#{stem}_url"
+      end
     end
+    
+    return @routes
+  end
 end
 

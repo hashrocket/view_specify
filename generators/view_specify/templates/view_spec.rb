@@ -7,4 +7,3 @@ describe '<%= view_template_path_stem %>' do
     render '<%= view_template_path_stem %>'
   end
 end
-
